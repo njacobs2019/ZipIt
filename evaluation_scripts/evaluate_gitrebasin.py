@@ -1,10 +1,12 @@
 import os
 import pdb
-import torch
-import random
-import numpy as np
-from utils import *
 import pickle
+import random
+
+import numpy as np
+import torch
+
+from utils import *
 
 
 def get_model_fname(model_idx, model_name=None, model_width=None):

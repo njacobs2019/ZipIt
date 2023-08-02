@@ -1,16 +1,16 @@
 import os
 import pdb
-import clip
-import torch
 import random
 from copy import deepcopy
 
-from tqdm import tqdm
-import numpy as np
+import clip
 import matplotlib.pyplot as plt
+import numpy as np
+import torch
+from tqdm import tqdm
 
-from utils import *
 from model_merger import ModelMerge
+from utils import *
 
 # torch.manual_seed(0)
 # random.seed(0)

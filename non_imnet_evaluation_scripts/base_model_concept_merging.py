@@ -1,11 +1,11 @@
 import os
-import torch
 import random
-from time import time
 from copy import deepcopy
+from time import time
 
-from tqdm.auto import tqdm
 import numpy as np
+import torch
+from tqdm.auto import tqdm
 
 from utils import *
 

@@ -1,30 +1,30 @@
-from collections import defaultdict
-from collections.abc import MutableMapping
-from typing import Sequence, Callable
-import os
 import math
+import os
 import pdb
-import torch
-import torch.nn as nn
-import numpy as np
-import yaml
-from tqdm.auto import tqdm
-from copy import deepcopy
-from sklearn.model_selection import train_test_split
-from torch.cuda.amp import autocast, GradScaler
-from torch.nn import CrossEntropyLoss
-from torch.optim import SGD, Adam, lr_scheduler
-from fvcore.nn.flop_count import flop_count
-from inspect import getmembers, isfunction
-from metric_calculators import get_metric_fns
-import torch.nn.functional as F
-import clip
-import einops
-import torch
-import scipy
 import random
 import string
+from collections import defaultdict
+from collections.abc import MutableMapping
+from copy import deepcopy
+from inspect import getmembers, isfunction
+from typing import Callable, Sequence
 
+import clip
+import einops
+import numpy as np
+import scipy
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import yaml
+from fvcore.nn.flop_count import flop_count
+from sklearn.model_selection import train_test_split
+from torch.cuda.amp import GradScaler, autocast
+from torch.nn import CrossEntropyLoss
+from torch.optim import SGD, Adam, lr_scheduler
+from tqdm.auto import tqdm
+
+from metric_calculators import get_metric_fns
 
 CONCEPT_TASKS = list(string.ascii_uppercase)
 
@@ -722,7 +722,7 @@ def prepare_data(config, device="cuda"):
     data_config["device"] = device
 
     if data_config["type"] == "cifar":
-        from datasets.cifar import prepare_train_loaders, prepare_test_loaders
+        from datasets.cifar import prepare_test_loaders, prepare_train_loaders
 
         train_loaders = prepare_train_loaders(data_config)
         test_loaders = prepare_test_loaders(data_config)
@@ -731,22 +731,24 @@ def prepare_data(config, device="cuda"):
 
         train_loaders, test_loaders = prepare_loaders(data_config)
     elif data_config["type"] == "nabird":
-        from datasets.nabird import prepare_train_loaders, prepare_test_loaders
+        from datasets.nabird import prepare_test_loaders, prepare_train_loaders
 
         train_loaders = prepare_train_loaders(data_config)
         test_loaders = prepare_test_loaders(data_config)
     elif data_config["type"] == "cub":
-        from datasets.cub import prepare_train_loaders, prepare_test_loaders
+        from datasets.cub import prepare_test_loaders, prepare_train_loaders
 
         train_loaders = prepare_train_loaders(data_config)
         test_loaders = prepare_test_loaders(data_config)
     elif data_config["type"] == "oxford_pets":
-        from datasets.oxford_pets import prepare_train_loaders, prepare_test_loaders
+        from datasets.oxford_pets import (prepare_test_loaders,
+                                          prepare_train_loaders)
 
         train_loaders = prepare_train_loaders(data_config)
         test_loaders = prepare_test_loaders(data_config)
     elif data_config["type"] == "stanford_dogs":
-        from datasets.stanford_dogs import prepare_train_loaders, prepare_test_loaders
+        from datasets.stanford_dogs import (prepare_test_loaders,
+                                            prepare_train_loaders)
 
         train_loaders = prepare_train_loaders(data_config)
         test_loaders = prepare_test_loaders(data_config)

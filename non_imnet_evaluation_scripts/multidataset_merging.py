@@ -1,14 +1,13 @@
 import os
 import pdb
-import torch
 from copy import deepcopy
+from itertools import combinations, product
 
 import numpy as np
-from itertools import product
-from utils import *
-from model_merger import ModelMerge
-from itertools import combinations
+import torch
 
+from model_merger import ModelMerge
+from utils import *
 
 if __name__ == "__main__":
     EVAL_TYPE = "hyperparameter_search"

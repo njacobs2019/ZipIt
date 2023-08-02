@@ -1,8 +1,9 @@
-import torch
-import networkx as nx
-from enum import Enum
 from abc import ABC, abstractmethod
+from enum import Enum
+
 import matplotlib.pyplot as plt
+import networkx as nx
+import torch
 
 
 class FeatureReshapeHandler:

@@ -1,19 +1,20 @@
 import math
-import typing
 import os
 import pdb
+import pickle
+import typing
+from copy import deepcopy
 
+import numpy as np
 import torch
 import torch.nn as nn
-from torch.nn import functional as F
-from copy import deepcopy
-from PIL import Image
-import pickle
 import torchvision.transforms as transforms
-import numpy as np
-from .singan_utils import imresize
+from PIL import Image
+from torch.nn import functional as F
+
 from utils import SpaceInterceptor
 
+from .singan_utils import imresize
 
 __all__ = ["g_multivanilla"]
 
@@ -406,10 +407,8 @@ class Sampler(nn.Module):
         # fig, ax = plt.subplots(3, 2)
         # ax[0, 0].imshow(ndarr[:, :, [0, 1, 2]])
         # ax[0, 1].imshow(ndarr[:, :, [0, 2, 1]])
-
         # ax[1, 0].imshow(ndarr[:, :, [1, 0, 2]])
         # ax[1, 1].imshow(ndarr[:, :, [1, 2, 0]])
-
         # ax[2, 0].imshow(ndarr[:, :, [2, 0, 1]])
         # ax[2, 1].imshow(ndarr[:, :, [2, 1, 0]])
         # plt.show()

@@ -1,12 +1,12 @@
-import torch
 import random
 from copy import deepcopy
 
-from tqdm.auto import tqdm
 import numpy as np
+import torch
+from tqdm.auto import tqdm
 
-from utils import *
 from model_merger import ModelMerge
+from utils import *
 
 torch.manual_seed(1)
 random.seed(1)

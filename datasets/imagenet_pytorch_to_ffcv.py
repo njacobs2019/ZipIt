@@ -1,13 +1,13 @@
-import torch
-import torchvision
-import numpy as np
-from tqdm import tqdm
-from sklearn.model_selection import train_test_split
-from imagenet_class import ImageNet
 import os
 
-from ffcv.writer import DatasetWriter
+import numpy as np
+import torch
+import torchvision
 from ffcv.fields import IntField, RGBImageField
+from ffcv.writer import DatasetWriter
+from imagenet_class import ImageNet
+from sklearn.model_selection import train_test_split
+from tqdm import tqdm
 
 
 def generate_random_class_splits(total_classes, split_proportions):

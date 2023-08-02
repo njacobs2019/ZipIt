@@ -1,21 +1,18 @@
 import os
 import pdb
-import clip
-import torch
 from copy import deepcopy
 
-from tqdm import tqdm
+import clip
 import numpy as np
-
-from utils import *
-from sklearn.model_selection import train_test_split
-from models.vgg import vgg11
 import torch
-from torch import nn
 import torchvision
 import torchvision.transforms as T
-import numpy as np
+from sklearn.model_selection import train_test_split
+from torch import nn
 from tqdm import tqdm
+
+from models.vgg import vgg11
+from utils import *
 
 CIFAR_MEAN = [125.307, 122.961, 113.8575]
 CIFAR_STD = [51.5865, 50.847, 51.255]

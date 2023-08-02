@@ -1,18 +1,15 @@
 import os
-import clip
-import torch
 from copy import deepcopy
 
+import clip
 import numpy as np
-
-from utils import *
-from sklearn.model_selection import train_test_split
-from models.resnets import resnet20
 import torch
 import torchvision
 import torchvision.transforms as T
-import numpy as np
+from sklearn.model_selection import train_test_split
 
+from models.resnets import resnet20
+from utils import *
 
 # INITIALIZATIONS
 CIFAR_MEAN = [125.307, 122.961, 113.8575]

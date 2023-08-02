@@ -1,8 +1,10 @@
 import os
+import random
+
+import numpy as np
 import torch
 import torchvision
-import random
-import numpy as np
+
 from utils import *
 
 

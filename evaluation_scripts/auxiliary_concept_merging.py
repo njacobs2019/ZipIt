@@ -1,14 +1,14 @@
 import os
 import pdb
-import torch
 import random
-
 from copy import deepcopy
-from tqdm.auto import tqdm
-import numpy as np
 
-from utils import *
+import numpy as np
+import torch
+from tqdm.auto import tqdm
+
 from model_merger import ModelMerge
+from utils import *
 
 torch.manual_seed(0)
 random.seed(0)

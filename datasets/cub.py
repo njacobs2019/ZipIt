@@ -1,21 +1,23 @@
+import datetime as dt
+import logging
 import os
 import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
-import logging
+
 import numpy as np
 import pandas as pd
+import scipy.io
 import torch
 import torch.nn as nn
+import torchvision.datasets as datasets
+import torchvision.models as models
+import torchvision.transforms as transforms
+from PIL import Image
 from torch.utils.data import Dataset
 from torchvision.datasets.folder import default_loader
 from torchvision.datasets.utils import download_url
-import torchvision.models as models
-import torchvision.datasets as datasets
-import torchvision.transforms as transforms
-import datetime as dt
-import xml.etree.ElementTree as ET
-from PIL import Image
-import scipy.io
+
 from utils import create_heldout_split
 
 

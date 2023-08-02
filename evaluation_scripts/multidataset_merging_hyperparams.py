@@ -1,17 +1,17 @@
 import os
 import pdb
-import clip
-import torch
 import random
 from copy import deepcopy
-
-from tqdm.auto import tqdm
-import numpy as np
-import matplotlib.pyplot as plt
 from itertools import product
-from utils import *
-from model_merger import ModelMerge
 
+import clip
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
+from tqdm.auto import tqdm
+
+from model_merger import ModelMerge
+from utils import *
 
 if __name__ == "__main__":
     EVAL_TYPE = "hyperparameter_search"

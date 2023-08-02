@@ -1,13 +1,13 @@
+import numpy as np
 import torch
 import torchvision
-import numpy as np
 
+from .caltech101 import Caltech101
+from .cub import CUB2011
 from .imagenet import ImageNet1k
 from .nabird import NABird
-from .cub import CUB2011
 from .oxford_pets import OxfordPets
 from .stanford_dogs import StanfordDogs
-from .caltech101 import Caltech101
 
 cifar50 = {
     "dir": "./data/cifar-100-python",

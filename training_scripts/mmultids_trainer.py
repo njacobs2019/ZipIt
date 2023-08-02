@@ -1,17 +1,17 @@
 import os
 import pdb
-import clip
-import torch
-import torchvision
 import random
 from copy import deepcopy
 
-from tqdm.auto import tqdm
-import numpy as np
+import clip
 import matplotlib.pyplot as plt
+import numpy as np
+import torch
+import torchvision
+from tqdm.auto import tqdm
 
-from utils import *
 from model_merger import ModelMerge
+from utils import *
 
 
 def fix_state_dict_maps(path, device):

@@ -1,15 +1,15 @@
 import os
-import torch
 import random
-from time import time
 from copy import deepcopy
+from time import time
 
-from tqdm.auto import tqdm
 import numpy as np
 import pandas as pd
+import torch
+from tqdm.auto import tqdm
 
-from utils import *
 from model_merger import ModelMerge
+from utils import *
 
 torch.manual_seed(0)
 random.seed(0)

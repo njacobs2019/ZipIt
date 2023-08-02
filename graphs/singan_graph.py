@@ -75,9 +75,10 @@ class SinGANGraph(BIGGraph):
 
 
 if __name__ == "__main__":
-    from model_merger import ModelMerge
-    from matching_functions import match_tensors_identity, match_tensors_zipit
     from copy import deepcopy
+
+    from matching_functions import match_tensors_identity, match_tensors_zipit
+    from model_merger import ModelMerge
     from models.singan import Sampler
 
     s = Sampler()

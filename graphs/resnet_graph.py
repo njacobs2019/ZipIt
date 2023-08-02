@@ -139,14 +139,15 @@ def resnet18(model):
 if __name__ == "__main__":
     # unit test, nice
     # call from root directory with `python -m "graphs.resnet_graph"`
-    import torch
-    from torch.utils.data import TensorDataset, DataLoader
-    import torchvision.models.resnet as resnet
-    import models.resnets as resnet2
-
-    from model_merger import ModelMerge
-    from matching_functions import match_tensors_identity, match_tensors_zipit
     from copy import deepcopy
+
+    import torch
+    import torchvision.models.resnet as resnet
+    from torch.utils.data import DataLoader, TensorDataset
+
+    import models.resnets as resnet2
+    from matching_functions import match_tensors_identity, match_tensors_zipit
+    from model_merger import ModelMerge
 
     data_x = torch.rand(4, 3, 224, 224)
     data_y = torch.zeros(4)

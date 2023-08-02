@@ -1,12 +1,12 @@
-import torch
 import random
 from copy import deepcopy
 
-from tqdm.auto import tqdm
 import numpy as np
+import torch
+from tqdm.auto import tqdm
 
-from utils import *
 from model_merger import ModelMerge
+from utils import *
 
 torch.manual_seed(1)
 random.seed(1)
@@ -174,9 +174,8 @@ if __name__ == "__main__":
                             elif "ensemble" in method:
                                 Merge = Ensemble(*config["models"]["bases"]).to(device)
                             elif "rebasin" in method:
-                                from imagenet_scripts.load_rebasin import (
-                                    load_rn50_rebasin,
-                                )
+                                from imagenet_scripts.load_rebasin import \
+                                    load_rn50_rebasin
 
                                 Merge = load_rn50_rebasin(*split, device=device)
                                 reset_bn_stats(Merge, config["data"]["train"]["full"])

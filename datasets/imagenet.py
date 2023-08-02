@@ -1,17 +1,12 @@
-import torch
 import os
-from torch import nn
-import torch.nn.functional as F
+
 import numpy as np
+import torch
+import torch.nn.functional as F
+from timm.data import (IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD,
+                       IMAGENET_INCEPTION_MEAN, IMAGENET_INCEPTION_STD)
+from torch import nn
 from tqdm import tqdm
-
-from timm.data import (
-    IMAGENET_INCEPTION_STD,
-    IMAGENET_INCEPTION_MEAN,
-    IMAGENET_DEFAULT_STD,
-    IMAGENET_DEFAULT_MEAN,
-)
-
 
 DEFAULT_CROP_RATIO = 224 / 256
 
@@ -57,20 +52,12 @@ class ImageNet1k:
 
     def create_loader(self, name, val):
         # Import here so that you don't need it to run the file
+        from ffcv.fields.decoders import (CenterCropRGBImageDecoder,
+                                          IntDecoder,
+                                          RandomResizedCropRGBImageDecoder)
         from ffcv.loader import Loader, OrderOption
-        from ffcv.transforms import (
-            ToTensor,
-            ToDevice,
-            ToTorchImage,
-            NormalizeImage,
-            Squeeze,
-            RandomHorizontalFlip,
-        )
-        from ffcv.fields.decoders import (
-            IntDecoder,
-            CenterCropRGBImageDecoder,
-            RandomResizedCropRGBImageDecoder,
-        )
+        from ffcv.transforms import (NormalizeImage, RandomHorizontalFlip,
+                                     Squeeze, ToDevice, ToTensor, ToTorchImage)
 
         if val:
             image_pipeline = [

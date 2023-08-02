@@ -1,25 +1,22 @@
 import os
 import pdb
-import clip
-import torch
 import random
 from copy import deepcopy
 
-from tqdm import tqdm
-import numpy as np
+import clip
 import matplotlib.pyplot as plt
-
-from utils import *
-from model_merger import ModelMerge
-from sklearn.model_selection import train_test_split
-from models.resnets import resnet20
+import numpy as np
 import torch
-from torch import nn
 import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as T
-import numpy as np
+from sklearn.model_selection import train_test_split
+from torch import nn
 from tqdm import tqdm
+
+from model_merger import ModelMerge
+from models.resnets import resnet20
+from utils import *
 
 CIFAR_MEAN = [125.307, 122.961, 113.8575]
 CIFAR_STD = [51.5865, 50.847, 51.255]

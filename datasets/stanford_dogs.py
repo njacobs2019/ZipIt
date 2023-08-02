@@ -1,18 +1,20 @@
+import logging
 import os
 import pdb
 import sys
 from pathlib import Path
-import logging
+
 import numpy as np
 import pandas as pd
+import scipy.io
 import torch
 import torch.nn as nn
+import torchvision.transforms as transforms
+from PIL import Image
 from torch.utils.data import Dataset
 from torchvision.datasets.folder import default_loader
 from torchvision.datasets.utils import download_url
-import torchvision.transforms as transforms
-from PIL import Image
-import scipy.io
+
 from utils import create_heldout_split
 
 

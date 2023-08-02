@@ -1,14 +1,16 @@
+import pdb
 from collections import defaultdict
 from copy import deepcopy
-import pdb
-import torch
-from torch import nn
-from fvcore.nn.flop_count import flop_count
-from graphs.base_graph import NodeType
-from metric_calculators import CovarianceMetric, MeanMetric
-from matching_functions import match_tensors_zipit
 from time import time
+
+import torch
+from fvcore.nn.flop_count import flop_count
+from torch import nn
 from tqdm.auto import tqdm
+
+from graphs.base_graph import NodeType
+from matching_functions import match_tensors_zipit
+from metric_calculators import CovarianceMetric, MeanMetric
 from utils import get_merging_fn
 
 

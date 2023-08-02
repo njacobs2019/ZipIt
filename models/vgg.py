@@ -1,7 +1,8 @@
 import pdb
+
 import torch
-from torch import nn
 import torchvision.transforms as T
+from torch import nn
 
 # https://github.com/kuangliu/pytorch-cifar/blob/master/models/vgg.py
 cfg = {

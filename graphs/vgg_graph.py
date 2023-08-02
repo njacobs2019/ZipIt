@@ -1,5 +1,6 @@
 import pdb
 import sys
+
 from graphs.base_graph import BIGGraph, NodeType
 
 
@@ -64,13 +65,15 @@ def vgg16(model):
 if __name__ == "__main__":
     sys.path.insert(0, "/nethome/gstoica3/research/ModelMerging/")
     import pdb
-    import torch
-    from torch.utils.data import TensorDataset, DataLoader
-    from models.vgg import vgg11 as vgg11_model, vgg16 as vgg16_model
-
-    from model_merger import ModelMerge
-    from matching_functions import match_tensors_identity, match_tensors_zipit
     from copy import deepcopy
+
+    import torch
+    from torch.utils.data import DataLoader, TensorDataset
+
+    from matching_functions import match_tensors_identity, match_tensors_zipit
+    from model_merger import ModelMerge
+    from models.vgg import vgg11 as vgg11_model
+    from models.vgg import vgg16 as vgg16_model
 
     data_x = torch.rand(4, 3, 32, 32)
     data_y = torch.zeros(4)
