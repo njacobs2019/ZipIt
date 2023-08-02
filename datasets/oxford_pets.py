@@ -31,109 +31,128 @@ class OxfordPets(Dataset):
             puts it in root directory. If the tar files are already downloaded, they are not
             downloaded again.
     """
-    folder = 'oxford_pets'
 
-    def __init__(self,
-                 root,
-                 train=True,
-                 transform=None,
-                 loader=default_loader,
-                 base_set=None):
-        
+    folder = "oxford_pets"
+
+    def __init__(
+        self, root, train=True, transform=None, loader=default_loader, base_set=None
+    ):
         self.root_og = root
-        self.name = 'oxford_pets'
+        self.name = "oxford_pets"
         self.root = os.path.join(os.path.expanduser(root), self.folder)
         self.train = train
         self.transform = transform
         self.loader = loader
-        
+
         if base_set is not None:
             self.dataset = base_set
-            self.targets = base_set['class_id'].unique()
+            self.targets = base_set["class_id"].unique()
         else:
             self._load_metadata()
 
     def __getitem__(self, idx):
-
         sample = self.dataset.iloc[idx]
-        path = os.path.join(self.root, 'images', sample.img_id) + '.jpg'
+        path = os.path.join(self.root, "images", sample.img_id) + ".jpg"
 
         target = sample.class_id - 1  # Targets start at 1 by default, so shift to 0
         img = self.loader(path)
         if self.transform is not None:
             img = self.transform(img)
 
-        return img, target#, idx
-    
+        return img, target  # , idx
+
     def _load_metadata(self):
         if self.train:
-            train_file = os.path.join(self.root, 'annotations', 'trainval.txt')
-            self.dataset = pd.read_csv(train_file, sep=' ', names=['img_id', 'class_id', 'species', 'breed_id'])
+            train_file = os.path.join(self.root, "annotations", "trainval.txt")
+            self.dataset = pd.read_csv(
+                train_file, sep=" ", names=["img_id", "class_id", "species", "breed_id"]
+            )
         else:
-            test_file = os.path.join(self.root, 'annotations', 'test.txt')
-            self.dataset = pd.read_csv(test_file, sep=' ', names=['img_id', 'class_id', 'species', 'breed_id'])
-        
-        self.targets = self.dataset['class_id'].unique()
+            test_file = os.path.join(self.root, "annotations", "test.txt")
+            self.dataset = pd.read_csv(
+                test_file, sep=" ", names=["img_id", "class_id", "species", "breed_id"]
+            )
+
+        self.targets = self.dataset["class_id"].unique()
 
     def __len__(self):
         return len(self.dataset)
-    
-oxford_pets_train_transform = transforms.Compose([
+
+
+oxford_pets_train_transform = transforms.Compose(
+    [
         transforms.Resize(256),
         transforms.RandomResizedCrop(224),
         transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+    ]
+)
 
-oxford_pets_test_transform = transforms.Compose([
+oxford_pets_test_transform = transforms.Compose(
+    [
         transforms.Resize(256),
         transforms.CenterCrop(224),
         transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+    ]
+)
+
 
 def oxford_pets_train_loader():
-    return OxfordPets('/srv/share/datasets/', train=True, transform=oxford_pets_train_transform)
+    return OxfordPets(
+        "/srv/share/datasets/", train=True, transform=oxford_pets_train_transform
+    )
 
 
 def oxford_pets_test_loader():
-    return OxfordPets('/srv/share/datasets/', train=False, transform=oxford_pets_test_transform)
+    return OxfordPets(
+        "/srv/share/datasets/", train=False, transform=oxford_pets_test_transform
+    )
 
 
 def prepare_train_loaders(config):
     return {
-        'full': torch.utils.data.DataLoader(
-            OxfordPets('/srv/share/datasets/', train=True, transform=oxford_pets_train_transform), 
-            batch_size=config['batch_size'], 
-            shuffle=config['shuffle_train'], 
-            num_workers=config['num_workers']
+        "full": torch.utils.data.DataLoader(
+            OxfordPets(
+                "/srv/share/datasets/",
+                train=True,
+                transform=oxford_pets_train_transform,
+            ),
+            batch_size=config["batch_size"],
+            shuffle=config["shuffle_train"],
+            num_workers=config["num_workers"],
         )
     }
 
+
 def prepare_test_loaders(config):
-    test_set = OxfordPets('/srv/share/datasets/', train=False, transform=oxford_pets_test_transform)
+    test_set = OxfordPets(
+        "/srv/share/datasets/", train=False, transform=oxford_pets_test_transform
+    )
     loaders = {
-        'full': torch.utils.data.DataLoader(
-            test_set, 
-            batch_size=config['batch_size'], 
-            shuffle=False, 
-            num_workers=config['num_workers']
+        "full": torch.utils.data.DataLoader(
+            test_set,
+            batch_size=config["batch_size"],
+            shuffle=False,
+            num_workers=config["num_workers"],
         )
     }
-    
-    if config.get('val_fraction', 0) > 0.:
+
+    if config.get("val_fraction", 0) > 0.0:
         # val_set, test_set = train_test_split(test_set.dataset, test_size=config['val_fraction'])
         # val_set = OxfordPets('/srv/share/datasets/', train=False, transform=oxford_pets_test_transform, base_set=val_set)
         # test_set = OxfordPets('/srv/share/datasets/', train=False, transform=oxford_pets_test_transform, base_set=test_set)
-        test_set, val_set = create_heldout_split(test_set, config['val_fraction'])
-        loaders['heldout_test'] = torch.utils.data.DataLoader(
+        test_set, val_set = create_heldout_split(test_set, config["val_fraction"])
+        loaders["heldout_test"] = torch.utils.data.DataLoader(
             test_set,
-            batch_size=config['batch_size'], 
-            shuffle=False, 
-            num_workers=config['num_workers']
+            batch_size=config["batch_size"],
+            shuffle=False,
+            num_workers=config["num_workers"],
         )
-        loaders['heldout_val'] = torch.utils.data.DataLoader(
-            val_set, 
-            batch_size=config['batch_size'], 
-            shuffle=False, 
-            num_workers=config['num_workers']
+        loaders["heldout_val"] = torch.utils.data.DataLoader(
+            val_set,
+            batch_size=config["batch_size"],
+            shuffle=False,
+            num_workers=config["num_workers"],
         )
     return loaders
