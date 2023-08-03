@@ -1,1 +1,5 @@
+# Cached python bytecode
 *.pyc
+
+# Pretrained source model weights
+/checkpoints/*.pth
