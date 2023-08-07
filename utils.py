@@ -9,6 +9,8 @@ from copy import deepcopy
 from inspect import getmembers, isfunction
 from typing import Callable, Sequence
 
+from typeguard import typechecked
+from typing import Optional, Dict, List
 import clip
 import einops
 import numpy as np
@@ -741,14 +743,12 @@ def prepare_data(config, device="cuda"):
         train_loaders = prepare_train_loaders(data_config)
         test_loaders = prepare_test_loaders(data_config)
     elif data_config["type"] == "oxford_pets":
-        from datasets.oxford_pets import (prepare_test_loaders,
-                                          prepare_train_loaders)
+        from datasets.oxford_pets import prepare_test_loaders, prepare_train_loaders
 
         train_loaders = prepare_train_loaders(data_config)
         test_loaders = prepare_test_loaders(data_config)
     elif data_config["type"] == "stanford_dogs":
-        from datasets.stanford_dogs import (prepare_test_loaders,
-                                            prepare_train_loaders)
+        from datasets.stanford_dogs import prepare_test_loaders, prepare_train_loaders
 
         train_loaders = prepare_train_loaders(data_config)
         test_loaders = prepare_test_loaders(data_config)
@@ -920,8 +920,20 @@ def prepare_experiment_config(config):
     return new_config
 
 
-def get_config_from_name(name, device=None):
-    """Load config based on its name."""
+@typechecked
+def get_config_from_name(name: str, device: Optional[str] = None) -> Dict:
+    """
+    Load config based on its name and set device.
+    If config["device"] is not set, it is set to device, else "cuda"
+
+    Args:
+        name (str): configuration name (matches file in ./configs)
+        device (str, optional): E.g. "cuda" or "cpu". Defaults to None.
+
+    Returns:
+        Dict: Configuration dictionary
+    """
+
     out = deepcopy(getattr(__import__("configs." + name), name).config)
     if device is None and "device" not in out:
         out["device"] = "cuda"
@@ -1044,7 +1056,7 @@ def load_clip_features(class_names, device):
     return text_features
 
 
-def find_pairs(str_splits):
+def find_pairs(str_splits: List[str]):
     pairs = []
     for i, str_split_i in enumerate(str_splits):
         try:
@@ -1061,7 +1073,10 @@ def find_pairs(str_splits):
     return pairs
 
 
-def find_runable_pairs(model_dir, model_name, skip_pair_idxs=[]):
+# Used for running multiple pairs of training for Table 1
+def find_runable_pairs(
+    model_dir: str, model_name: str, skip_pair_idxs: List[int] = []
+) -> List:
     run_pairs = []
     valid_pairs = [
         pair
@@ -1075,11 +1090,40 @@ def find_runable_pairs(model_dir, model_name, skip_pair_idxs=[]):
     return run_pairs
 
 
-def split_str_to_ints(split):
-    return [int(i) for i in split.split("_")]
+@typechecked
+def split_str_to_ints(split: str) -> Optional[List[int]]:
+    """
+    Converts "1_2_3" --> [1, 2, 3]
+    If casting as an int fails, functions returns None
+
+    Args:
+        split (str): String of ints separated by "_"
+
+    Returns:
+        Optional[List[int]]: List of ints
+    """
+
+    try:
+        out = [int(i) for i in split.split("_")]
+    except:
+        out = None
+    return out
 
 
-def is_valid_pair(model_dir, pair, model_type):
+def is_valid_pair(model_dir: str, pair: List[str], model_type: str) -> bool:
+    """
+    Determines if pair of source models is valid.
+    What makes it valid??
+
+    Args:
+        model_dir (str): _description_
+        pair (List[str]): _description_
+        model_type (str): _description_
+
+    Returns:
+        bool: if the pair is valid
+    """
+
     paths = os.listdir(os.path.join(model_dir, pair[0]))
     flag = True
     for path in paths:
@@ -1120,7 +1164,27 @@ def read_yaml(path):
     return config
 
 
-def inject_pair(config, pair, ignore_bases=False):
+def inject_pair(config: Dict, pair: List[str], ignore_bases=False):
+    """
+    Modifies the given configuration by injecting the specified pair of class splits and updating the model bases.
+
+    Args:
+        config (Dict): A dictionary containing the configuration settings. It must include keys 'model' and 'dataset'. 
+                         'model' should contain 'name' and 'dir', and 'dataset' should contain 'class_splits'.
+        pair (List[str]): A list of strings representing class splits to be injected into the configuration.
+        ignore_bases (bool, optional): If True, the 'bases' field in the 'model' part of the config will not be updated. Defaults to False.
+
+    Returns:
+        Dict: The modified configuration dictionary.
+
+    Example:
+        config = {
+            "model": {"name": "model1", "dir": "/path/to/models"},
+            "dataset": {}
+        }
+        pair = ["split1", "split2"]
+    """
+
     model_name = config["model"]["name"]
     config["dataset"]["class_splits"] = [split_str_to_ints(split) for split in pair]
     if not ignore_bases:
