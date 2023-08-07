@@ -2,6 +2,7 @@ import os
 import random
 from copy import deepcopy
 from time import time
+from typing import List, Dict
 
 import numpy as np
 import pandas as pd
@@ -17,39 +18,43 @@ np.random.seed(0)
 import pandas as pd
 
 
-def dict_update(d, u):
-    for k, v in u.items():
-        if isinstance(v, list):
-            if k not in d:
-                d[k] = []
-            d[k] += v
-        else:
-            d[k] = v
-    return d
+# def dict_update(d, u):
+#     for k, v in u.items():
+#         if isinstance(v, list):
+#             if k not in d:
+#                 d[k] = []
+#             d[k] += v
+#         else:
+#             d[k] = v
+#     return d
 
 
-def create_df(search_results):
-    base = {}
-    for _, results in search_results.items():
-        base = dict_update(base, results)
+# def create_df(search_results):
+#     base = {}
+#     for _, results in search_results.items():
+#         base = dict_update(base, results)
 
-    numbers = np.array(list(base.values())).T
-    cols = list(base.keys())
+#     numbers = np.array(list(base.values())).T
+#     cols = list(base.keys())
 
-    df = pd.DataFrame(numbers, columns=cols)
-    return df
-
-
-def get_task_mapping(labels, splits):
-    task_mapping = []
-    for i, label in enumerate(labels):
-        for j, split in enumerate(splits):
-            if label in split:
-                task_mapping.append(j)
-    return torch.from_numpy(np.array(task_mapping))
+#     df = pd.DataFrame(numbers, columns=cols)
+#     return df
 
 
-def run_node_experiment(node_config, experiment_config, pairs, device, csv_file):
+# def get_task_mapping(labels, splits):
+#     task_mapping = []
+#     for i, label in enumerate(labels):
+#         for j, split in enumerate(splits):
+#             if label in split:
+#                 task_mapping.append(j)
+#     return torch.from_numpy(np.array(task_mapping))
+
+
+def run_node_experiment(
+    node_config: Dict, experiment_config: Dict, pairs: List, device, csv_file
+):
+    assert len(pairs) > 0, "pairs is empty"
+
     for pair in tqdm(pairs, desc="Evaluating Pairs..."):
         experiment_config = inject_pair(experiment_config, pair)
         config = prepare_experiment_config(raw_config)
@@ -95,16 +100,12 @@ def run_node_experiment(node_config, experiment_config, pairs, device, csv_file)
 
 if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    config_name = "cifar50_resnet20"
+    assert device == "cuda", "GPU isn't working"
+    config_name = "nick_cifar10_resnet50"
     skip_pair_idxs = [0]
 
     experiment_configs = [
-        # best experiment
         {"stop_node": 21, "params": {"a": 0.0001, "b": 0.075}},
-        # {'stop_node': 21, 'params':{'a': 1., 'b': 1.}},
-        # {'stop_node': None, 'params':{'a': 0.01, 'b': 1.0}, 'dataset': {'train_fraction': .0001, 'no_transform': False}},
-        # Alpha Ablations
-        # {'stop_node': None, 'params': {'a': .0, 'b': 1.}},
     ]
 
     raw_config = get_config_from_name(config_name, device=device)
@@ -123,6 +124,7 @@ if __name__ == "__main__":
     with torch.no_grad():
         for node_config in experiment_configs:
             raw_config["dataset"].update(node_config.get("dataset", {}))
+
             run_node_experiment(
                 node_config=node_config,
                 experiment_config=raw_config,
