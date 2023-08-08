@@ -710,10 +710,20 @@ def evaluate_model(eval_type, model, config, **opt_kwargs):
 ##########################################################################################################################
 
 
-def prepare_data(config, device="cuda"):
-    """Load all dataloaders required for experiment."""
-    if isinstance(config, list):
-        return [prepare_data(c, device) for c in config]
+def prepare_data(config: Dict, device: str = "cuda"):
+    """
+    Gets the training and testing data loader
+
+    Args:
+        config (Dict): Experimental configuration
+        device (str, optional): Device. Defaults to "cuda".
+
+    Raises:
+        NotImplementedError: If the dataset doesn't have implemented dataloaders
+
+    Returns:
+        Dict[str, Any]: Keys are "train" and "test"
+    """
 
     dataset_name = config["name"]
 
@@ -900,8 +910,12 @@ def get_merging_fn(name):
 
 
 def prepare_experiment_config(config):
-    """Load all functions/classes/models requested in config to experiment config dict."""
+    """
+    Load all functions/classes/models requested in config to experiment config dict.
+    """
+
     data = prepare_data(config["dataset"], device=config["device"])
+
     if config["eval_type"] == "logits":
         config["model"]["output_dim"] = len(data["test"]["class_names"])
     else:
@@ -1169,7 +1183,7 @@ def inject_pair(config: Dict, pair: List[str], ignore_bases=False):
     Modifies the given configuration by injecting the specified pair of class splits and updating the model bases.
 
     Args:
-        config (Dict): A dictionary containing the configuration settings. It must include keys 'model' and 'dataset'. 
+        config (Dict): A dictionary containing the configuration settings. It must include keys 'model' and 'dataset'.
                          'model' should contain 'name' and 'dir', and 'dataset' should contain 'class_splits'.
         pair (List[str]): A list of strings representing class splits to be injected into the configuration.
         ignore_bases (bool, optional): If True, the 'bases' field in the 'model' part of the config will not be updated. Defaults to False.

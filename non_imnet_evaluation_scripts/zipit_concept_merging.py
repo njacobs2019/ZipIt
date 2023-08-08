@@ -51,7 +51,7 @@ import pandas as pd
 
 
 def run_node_experiment(
-    node_config: Dict, experiment_config: Dict, pairs: List, device, csv_file
+    node_config: Dict, experiment_config: Dict, pairs: List, device, csv_file: str
 ):
     assert len(pairs) > 0, "pairs is empty"
 
