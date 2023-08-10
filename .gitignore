@@ -3,3 +3,5 @@
 
 # Pretrained source model weights
 /checkpoints/*.pth
+
+/data

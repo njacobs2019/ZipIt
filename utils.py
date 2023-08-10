@@ -779,8 +779,21 @@ def prepare_data(config: Dict, device: str = "cuda"):
     return {"train": train_loaders, "test": test_loaders}
 
 
-def prepare_resnets(config, device):
-    """Load all pretrained resnet models in config."""
+def prepare_resnets(config: Dict, device: str) -> Dict:
+    """
+    Load all pretrained resnet models in config.
+
+    Args:
+        config (Dict): Experimental configuration file
+        device (str): "cuda" or "cpu"
+
+    Raises:
+        NotImplementedError: If architecture is not implemented
+
+    Returns:
+        Dict: Dictionary of ResNet models (instances of ResNet class in torchvision)
+    """
+
     bases = []
     name = config["name"]
 
@@ -803,7 +816,8 @@ def prepare_resnets(config, device):
 
     output_dim = config["output_dim"]
     for base_path in tqdm(config["bases"], desc="Preparing Models"):
-        base_sd = torch.load(base_path, map_location=torch.device(device))
+        # base_sd = torch.load(base_path, map_location=torch.device(device))
+        base_sd = torch.load(base_path, map_location="cpu")
 
         # Remove module for dataparallel
         for k in list(base_sd.keys()):
@@ -812,7 +826,7 @@ def prepare_resnets(config, device):
                 del base_sd[k]
 
         base_model = wrapper(num_classes=output_dim).to(device)
-        base_model.load_state_dict(base_sd)
+        base_model.load_state_dict(base_sd["state_dict"])
         bases.append(base_model)
     new_model = wrapper(num_classes=output_dim).to(device)
     return {"bases": bases, "new": new_model}  # this will be the merged model
@@ -876,8 +890,20 @@ def prepare_models(config, device="cuda"):
         raise NotImplementedError(config["name"])
 
 
-def prepare_graph(config):
-    """Get graph class of experiment models in config."""
+def prepare_graph(config: Dict):
+    """
+    Get graph class of experiment models in config.
+
+    Args:
+        config (Dict): Experiment config file
+
+    Raises:
+        NotImplementedError: If model's graph is not implemented
+
+    Returns:
+        Graph: instance of one of the graph classes
+    """
+
     if config["name"].startswith("resnet"):
         model_name = config["name"].split("x")[0]
         import graphs.resnet_graph as graph_module
@@ -912,20 +938,31 @@ def get_merging_fn(name):
 def prepare_experiment_config(config):
     """
     Load all functions/classes/models requested in config to experiment config dict.
+
+    Adds graph, data loaders, model objects, merging functions, and metric functions to config.
     """
 
+    # Gets the training and testing data loaders
     data = prepare_data(config["dataset"], device=config["device"])
 
     if config["eval_type"] == "logits":
         config["model"]["output_dim"] = len(data["test"]["class_names"])
     else:
+        # Case for CLIP Loss function
         config["model"]["output_dim"] = 512
+
     new_config = {
-        "graph": prepare_graph(config["model"]),
+        "graph": prepare_graph(config["model"]),  # get graph object
         "data": data,
-        "models": prepare_models(config["model"], device=config["device"]),
-        "merging_fn": get_merging_fn(config["merging_fn"]),
-        "metric_fns": get_metric_fns(config["merging_metrics"]),
+        "models": prepare_models(
+            config["model"], device=config["device"]
+        ),  # get ResNet objects
+        "merging_fn": get_merging_fn(
+            config["merging_fn"]
+        ),  # gets the matching function
+        "metric_fns": get_metric_fns(
+            config["merging_metrics"]
+        ),  # dictionary of metrics
     }
     # Add outstanding elements
     for key in config:
@@ -1030,7 +1067,7 @@ def vector_gather(vectors, indices):
 # use the train loader with data augmentation as this gives better results
 # taken from https://github.com/KellerJordan/REPAIR
 def reset_bn_stats(model, loader, reset=True):
-    """Reset batch norm stats if nn.BatchNorm2d present in the model."""
+    """Reset/recalculate batch norm stats (in-place) if nn.BatchNorm2d present in the model."""
     device = get_device(model)
     has_bn = False
     # resetting stats to baseline first as below is necessary for stability

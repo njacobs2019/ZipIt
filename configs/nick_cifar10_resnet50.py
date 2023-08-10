@@ -4,8 +4,8 @@ config = {
         "name": "resnet50",
         "dir": "./checkpoints",
         "bases": [
-            "./checkpoints/resnet50-19c8e357.pth",
             "./checkpoints/moco_v1_200ep_pretrain.pth",
+            "./checkpoints/resnet50-19c8e357.pth",
         ],
     },
     "merging_fn": "match_tensors_zipit",
